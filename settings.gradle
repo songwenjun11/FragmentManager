@@ -1,0 +1,5 @@
+rootProject.name = "FragmentManager"
+include ':app'
+include ':note'
+include ':fragmentManager'
+include ':manager-prossion'

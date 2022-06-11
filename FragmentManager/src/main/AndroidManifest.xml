@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.model.fragmentmanager">
+
+    <application
+        android:enabled="true">
+        <activity android:name=".activity.ParasitismActivity"
+            android:exported="true"
+            android:theme="@style/Theme.FragmentManager"/>
+    </application>
+</manifest>
