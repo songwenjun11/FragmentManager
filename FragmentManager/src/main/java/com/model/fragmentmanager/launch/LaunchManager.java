@@ -1,12 +1,16 @@
 package com.model.fragmentmanager.launch;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultCallback;
+
 import com.example.note.enums.LaunchMode;
 import com.model.fragmentmanager.activity.ParasitismActivity;
 import com.model.fragmentmanager.beans.FragmentInfo;
+import com.model.fragmentmanager.contracts.bean.FragmentResult;
 import com.model.fragmentmanager.launch.interfaces.ICustomLaunchModel;
 import com.model.fragmentmanager.launch.interfaces.ILunchModelStart;
 import com.model.fragmentmanager.launch.model.SingleInstanceModel;
@@ -70,6 +74,28 @@ public class LaunchManager {
         }
     }
 
+    public void startFragment(Intent intent, int requestCode, ActivityResultCallback<? super FragmentResult> callback) {
+        String action = intent.getAction();
+        Bundle bundle = intent.getExtras();
+        Map<String, Object> params = extractParams(intent);
+        if (action == null || action.equals("")) {
+            //class对象的启动方式
+            String packageName = intent.getComponent().getClassName();
+            FragmentInfo fragmentInfo = FragmentManager.getFragmentMap().get(packageName);
+            if (fragmentInfo == null) {
+                throw new NullPointerException("Fragment is not fount");
+            }
+            fragmentInfo.setResult(true);
+            fragmentInfo.setRequestCode(requestCode);
+            fragmentInfo.setIntent(intent);
+            fragmentInfo.setCallback(callback);
+            startActivityForClass(fragmentInfo, params, bundle);
+        } else {
+            //action的启动方式
+            startActivityForAction(action, params, bundle);
+        }
+    }
+
     private void startActivityForAction(String action, Map<String, Object> params, Bundle bundle) {
         boolean containAction = false;
         for (FragmentInfo fragmentInfo : FragmentManager.getFragmentStack()) {
@@ -88,7 +114,7 @@ public class LaunchManager {
     private void startActivityForClass(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle) {
         String launchMode = fragmentInfo.getLaunchMode();
         if (FragmentManager.getActivityStack().size() == 0) {
-            startParasitismActivity(bundle);
+            startParasitismActivity(bundle, fragmentInfo.getRequestCode());
         }
         if (!launchMode.equals(LaunchMode.STANDARD)) {
             switch (launchMode) {
@@ -114,7 +140,8 @@ public class LaunchManager {
         }
     }
 
-    private void builder(ILunchModelStart lunchModelStart, FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle) {
+    private void builder(ILunchModelStart lunchModelStart, FragmentInfo fragmentInfo, Map<String, Object> params,
+                         Bundle bundle) {
         lunchModelStart.startActivity(fragmentInfo, params, bundle);
     }
 
@@ -136,11 +163,16 @@ public class LaunchManager {
         return params;
     }
 
-    private void startParasitismActivity(Bundle bundle) {
+    private void startParasitismActivity(Bundle bundle, int requestCode) {
         Intent intent = new Intent(context, ParasitismActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             intent.putExtras(bundle);
+        }
+        if (context instanceof Activity && requestCode != 0) {
+            Activity activity = (Activity) context;
+            activity.startActivityForResult(intent, requestCode);
+            return;
         }
         context.startActivity(intent);
     }

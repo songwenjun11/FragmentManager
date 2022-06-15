@@ -7,7 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.ActivityResultCallback
 import com.example.note.RegisterFragment
+import com.model.fragmentmanager.contracts.StartFragmentForResult
+import com.model.fragmentmanager.contracts.bean.FragmentResult
 import com.model.fragmentmanager.supper.ActivityFragment
 
 // TODO: Rename parameter arguments, choose names that match
@@ -41,7 +44,7 @@ class TwoFragment : ActivityFragment() {
         // Inflate the layout for this fragment
         val inflate = inflater.inflate(R.layout.fragment_two, container, false)
         inflate.findViewById<TextView>(R.id.tv_click).setOnClickListener {
-            val intent = Intent(requireContext(),OneFragment::class.java)
+            val intent = Intent(requireContext(), OneFragment::class.java)
             intent.putExtra("asda", "sadasdasdas")
             startFragment(intent)
         }
@@ -50,7 +53,21 @@ class TwoFragment : ActivityFragment() {
 
     override fun params(params: MutableMap<String, Any>?) {
         super.params(params)
+        //TODO 携带返回值跳转方式
+//        val registerForFragmentResult = registerForFragmentResult(
+//            StartFragmentForResult()
+//        ) { it ->
+//            //返回值在这
+//        }
+//        val intent = Intent(requireContext(), OneFragment::class.java)
+//        intent.putExtra("asda", "sadasdasdas")
+//        registerForFragmentResult.launch(intent)
 
+//        startFragmentForResult(intent, 100)
+
+//        startFragmentForResult(intent, 100, { it ->
+//            //返回值
+//        })
     }
 
     companion object {
@@ -71,5 +88,9 @@ class TwoFragment : ActivityFragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onFragmentResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onFragmentResult(requestCode, resultCode, data)
     }
 }
