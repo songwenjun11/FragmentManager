@@ -38,7 +38,7 @@ public class SingleInstanceModel implements ILunchModelStart {
                 return;
             }
         }
-        startNewActivity(FragmentManager.mContext, bundle);
+        startNewActivity(FragmentManager.mContext, bundle, fragmentInfo.getRequestCode());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

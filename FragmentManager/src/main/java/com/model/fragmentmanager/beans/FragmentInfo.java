@@ -2,6 +2,9 @@ package com.model.fragmentmanager.beans;
 
 import android.content.Intent;
 
+import androidx.activity.result.ActivityResultCallback;
+
+import com.model.fragmentmanager.contracts.bean.FragmentResult;
 import com.model.fragmentmanager.supper.ActivityFragment;
 import com.example.note.enums.LaunchMode;
 
@@ -19,6 +22,37 @@ public class FragmentInfo {
     private String[] actions;
 
     private Intent intent;
+
+    private int requestCode;
+
+    private boolean isResult = false;
+
+    private ActivityResultCallback<? super FragmentResult> callback;
+
+    public ActivityResultCallback<? super FragmentResult> getCallback() {
+        return callback;
+    }
+
+    public void setCallback(
+        ActivityResultCallback<? super FragmentResult> callback) {
+        this.callback = callback;
+    }
+
+    public int getRequestCode() {
+        return requestCode;
+    }
+
+    public void setRequestCode(int requestCode) {
+        this.requestCode = requestCode;
+    }
+
+    public boolean isResult() {
+        return isResult;
+    }
+
+    public void setResult(boolean result) {
+        isResult = result;
+    }
 
     public Intent getIntent() {
         return intent;

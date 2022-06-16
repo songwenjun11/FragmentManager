@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultCallback;
+
 import com.example.note.enums.LaunchMode;
 import com.model.fragmentmanager.activity.ParasitismActivity;
 import com.model.fragmentmanager.beans.FragmentInfo;
+import com.model.fragmentmanager.contracts.bean.FragmentResult;
 import com.model.fragmentmanager.interfaces.IFragmentPut;
 import com.model.fragmentmanager.launch.LaunchManager;
 import com.model.fragmentmanager.supper.ActivityFragment;
@@ -98,7 +101,7 @@ public class FragmentManager {
             fragmentClass = (Class<? super ActivityFragment>) aClass;
             FragmentInfo fragmentInfo = new FragmentInfo();
             fragmentInfo.setFragmentClass(fragmentClass);
-            fragmentInfo.setActions(new String[]{action});
+            fragmentInfo.setActions(new String[] {action});
             fragmentInfo.setLaunchMode(launchMode);
             fragmentStack.add(fragmentInfo);
             fragmentMap.put(fragmentClass.getName(), fragmentInfo);
@@ -114,5 +117,14 @@ public class FragmentManager {
      */
     public static void startFragment(Intent intent) {
         LaunchManager.getInstance(mContext).startFragment(intent);
+    }
+
+    public static void startFragmentForResult(Intent intent, int requestCode) {
+        LaunchManager.getInstance(mContext).startFragment(intent, requestCode, null);
+    }
+
+    public static void launcherFragment(Intent intent, int requestCode,
+                                        ActivityResultCallback<? super FragmentResult> callback) {
+        LaunchManager.getInstance(mContext).startFragment(intent, requestCode, callback);
     }
 }

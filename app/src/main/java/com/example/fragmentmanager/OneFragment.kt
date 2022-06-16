@@ -20,7 +20,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [OneFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-@RegisterFragment(launchMode = LaunchMode.SINGLE_TOP)
+@RegisterFragment(launchMode = LaunchMode.STANDARD)
 class OneFragment : ActivityFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -40,7 +40,10 @@ class OneFragment : ActivityFragment() {
     ): View? {
         // Inflate the layout for this fragment
         val inflate = inflater.inflate(R.layout.fragment_one, container, false)
-        inflate.setOnClickListener { finish() }
+        inflate.setOnClickListener {
+            intent.putExtra("a", "我是返回值");
+            finishResult(intent, 120)
+        }
         val tv = inflate.findViewById<TextView>(R.id.asddd)
         val stringExtra = intent.getStringExtra("asda")
         tv.text = stringExtra

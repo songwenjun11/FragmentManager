@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -92,7 +96,7 @@ public class ParasitismActivity extends AppCompatActivity {
      * @throws InstantiationException 错误2
      */
     public ActivityFragment classToFragment(FragmentInfo fragmentInfo)
-            throws IllegalAccessException, InstantiationException {
+        throws IllegalAccessException, InstantiationException {
         Object object = fragmentInfo.getFragmentClass().newInstance();
         if (object instanceof ActivityFragment) {
             ActivityFragment fragment = (ActivityFragment) object;
@@ -124,7 +128,16 @@ public class ParasitismActivity extends AppCompatActivity {
                 fragment.addContext(this);
                 fragment.params(params);
                 fragment.addKey(fragmentKey);
-                addStack(fragment);
+                fragment.addIsResult(fragmentInfo.isResult());
+                fragment.addRequestCode(fragmentInfo.getRequestCode());
+                ActivityFragment currentFragment = getCurrentFragment();
+                if (currentFragment != null) {
+                    currentFragment.addCallBack(fragmentInfo.getCallback());
+                    addStack(fragment);
+                } else {
+                    addStack(fragment);
+                    getCurrentFragment().addCallBack(fragmentInfo.getCallback());
+                }
             }
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
@@ -169,7 +182,11 @@ public class ParasitismActivity extends AppCompatActivity {
     }
 
     public ActivityFragment getCurrentFragment() {
-        return fragmentStack.get(fragmentStack.size() - 1);
+        if (fragmentStack.size() <= 0) {
+            return null;
+        }
+        int index = fragmentStack.size() - 1;
+        return fragmentStack.get(index);
     }
 
     /**
@@ -196,6 +213,12 @@ public class ParasitismActivity extends AppCompatActivity {
 
     public void finishCurrentFragment() {
         finishFragmentIndex(getStakeMaxPosition());
+    }
+
+    public void finishFragment(ActivityFragment fragment, int requestCode, int resultCode, Intent data) {
+        finishFragment(fragment);
+        getCurrentFragment().onFragmentResult(requestCode, resultCode, data);
+        getCurrentFragment().clearCallBack();
     }
 
     public void finishFragment(ActivityFragment fragment) {
@@ -235,6 +258,12 @@ public class ParasitismActivity extends AppCompatActivity {
         fragmentMap.remove(activityFragment.getFragmentKey());
         activityFragment.onStop();
         activityFragment.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        getCurrentFragment().onFragmentResult(requestCode, resultCode, data);
     }
 
     @Override

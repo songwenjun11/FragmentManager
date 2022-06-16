@@ -1,5 +1,6 @@
 package com.model.fragmentmanager.launch.interfaces;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,8 +22,8 @@ public interface ILunchModelStart {
      * 启动页面
      *
      * @param fragmentInfo fragment实体
-     * @param params 参数
-     * @param bundle 参数
+     * @param params       参数
+     * @param bundle       参数
      */
     void startActivity(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle);
 
@@ -30,13 +31,18 @@ public interface ILunchModelStart {
      * 跳转ParasitismActivity
      *
      * @param mContext 上下文
-     * @param bundle 参数
+     * @param bundle   参数
      */
-    default void startNewActivity(Context mContext,Bundle bundle){
+    default void startNewActivity(Context mContext, Bundle bundle, int requestCode) {
         Intent intent = new Intent(mContext, ParasitismActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             intent.putExtras(bundle);
+        }
+        if (mContext instanceof Activity && requestCode != 0) {
+            Activity activity = (Activity) mContext;
+            activity.startActivityForResult(intent, requestCode);
+            return;
         }
         mContext.startActivity(intent);
     }
