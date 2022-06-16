@@ -48,6 +48,7 @@ public class ActivityStackListManager {
         if (parasitismActivity == null) {
             activityStack.add(activity);
             activityMap.put(key, activity);
+            activity.setActivityTag(key);
         } else {
             addActivityStack(activity);
         }

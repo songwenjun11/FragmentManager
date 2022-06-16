@@ -47,7 +47,7 @@ public class ParasitismActivity extends AppCompatActivity {
     private Intent intent;
     private androidx.fragment.app.FragmentManager fragmentManager;
 
-    public synchronized void setActivityTag(String activityTag) {
+    public synchronized final void setActivityTag(String activityTag) {
         synchronized (ParasitismActivity.class) {
             if (this.ActivityTag == null) {
                 this.ActivityTag = activityTag;
