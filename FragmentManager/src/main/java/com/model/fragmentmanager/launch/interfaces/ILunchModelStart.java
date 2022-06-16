@@ -28,12 +28,12 @@ public interface ILunchModelStart {
     void startActivity(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle);
 
     /**
-     * 跳转ParasitismActivity
+     * 创建新的任务栈  newInstance
      *
      * @param mContext 上下文
      * @param bundle   参数
      */
-    default void startNewActivity(Context mContext, Bundle bundle, int requestCode) {
+    default void newInstance(Context mContext, Bundle bundle, int requestCode) {
         Intent intent = new Intent(mContext, ParasitismActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {

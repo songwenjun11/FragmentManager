@@ -19,4 +19,8 @@ public @interface RegisterFragment {
     String launchMode() default LaunchMode.STANDARD;
 
     String[] action() default "";
+
+    int openAnim() default -1;
+
+    int closeAnim() default -1;
 }
