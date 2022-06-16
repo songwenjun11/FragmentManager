@@ -3,17 +3,17 @@ package com.model.fragmentmanager.launch.model;
 import android.os.Bundle;
 
 import com.model.fragmentmanager.beans.FragmentInfo;
-import com.model.fragmentmanager.beans.FragmentInfoParamsBean;
 import com.model.fragmentmanager.event_bus.EventMessage;
 import com.model.fragmentmanager.launch.interfaces.ILunchModelStart;
+import com.model.fragmentmanager.tools.ActivityStackListManager;
 import com.model.fragmentmanager.tools.FragmentManager;
 import com.model.fragmentmanager.tools.Shake;
+
+import java.util.Map;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.Map;
 
 /**
  * 全局唯一模式
@@ -31,10 +31,10 @@ public class SingleInstanceModel implements ILunchModelStart {
         this.fragmentInfo = fragmentInfo;
         this.params = params;
         EventBus.getDefault().register(this);
-        if (FragmentManager.getActivityStack().size() == 0) {
-            int openFragmentSize = FragmentManager.getCurrentActivity().getOpenFragmentSize();
+        if (ActivityStackListManager.getInstance().getActivityStack().size() == 0) {
+            int openFragmentSize = ActivityStackListManager.getInstance().getCurrentActivity().getOpenFragmentSize();
             if (openFragmentSize == 0) {
-                FragmentManager.getCurrentActivity().addFragment(this.fragmentInfo, this.params);
+                ActivityStackListManager.getInstance().getCurrentActivity().addFragment(this.fragmentInfo, this.params);
                 return;
             }
         }
@@ -46,7 +46,7 @@ public class SingleInstanceModel implements ILunchModelStart {
         if (!Shake.isEventValid()) {
             return;
         }
-        FragmentManager.getCurrentActivity().addFragment(fragmentInfo, params);
+        ActivityStackListManager.getInstance().getCurrentActivity().addFragment(fragmentInfo, params);
         EventBus.getDefault().unregister(this);
     }
 }

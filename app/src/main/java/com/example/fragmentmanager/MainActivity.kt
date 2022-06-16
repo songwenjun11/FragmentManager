@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         val name = OneFragment::class.java.name
         Log.e("asdasda", name)
         findViewById<TextView>(R.id.tv).setOnClickListener {
-            FragmentManager.startFragment(Intent(this, TwoFragment::class.java))
+            FragmentManager.getInstance().startFragment(Intent(this, TwoFragment::class.java))
         }
     }
 }

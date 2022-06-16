@@ -16,6 +16,7 @@ import com.model.fragmentmanager.beans.FragmentInfo;
 import com.model.fragmentmanager.beans.FragmentInfoParamsBean;
 import com.model.fragmentmanager.event_bus.EventMessage;
 import com.model.fragmentmanager.supper.ActivityFragment;
+import com.model.fragmentmanager.tools.ActivityStackListManager;
 import com.model.fragmentmanager.tools.FragmentManager;
 import com.model.fragmentmanager.tools.RandomStringTool;
 
@@ -68,7 +69,7 @@ public class ParasitismActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager.addActivityStack(this);
+        ActivityStackListManager.getInstance().addActivityStack(this);
         FrameLayout frameLayout = new FrameLayout(this);
         frameLayout.setId(layoutID);
         setContentView(frameLayout);
@@ -269,6 +270,6 @@ public class ParasitismActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FragmentManager.removeActivityStack(this);
+        ActivityStackListManager.getInstance().removeActivityStack(this);
     }
 }

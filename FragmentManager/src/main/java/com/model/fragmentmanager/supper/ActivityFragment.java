@@ -90,16 +90,16 @@ public class ActivityFragment extends Fragment {
     }
 
     public final void startFragment(Intent intent) {
-        FragmentManager.startFragment(intent);
+        FragmentManager.getInstance().startFragment(intent);
     }
 
     public final void startFragmentForResult(Intent intent, int requestCode) {
-        FragmentManager.startFragmentForResult(intent, requestCode);
+        FragmentManager.getInstance().startFragmentForResult(intent, requestCode);
     }
 
     public final void startFragmentForResult(Intent intent, int requestCode,
                                              ActivityResultCallback<? super FragmentResult> callback) {
-        FragmentManager.launcherFragment(intent, requestCode, callback);
+        FragmentManager.getInstance().launcherFragment(intent, requestCode, callback);
     }
 
     public final <I extends Intent, O> ActivityResultLauncher<I> registerForFragmentResult(

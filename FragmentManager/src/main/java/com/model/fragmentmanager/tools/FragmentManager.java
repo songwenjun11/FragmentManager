@@ -27,24 +27,33 @@ import java.util.Stack;
  * @since 2022-06-10
  */
 public class FragmentManager {
+    private static volatile FragmentManager fragmentManager;
+
     public static Application mContext;
 
-    private static final Stack<FragmentInfo> fragmentStack = new Stack<>();//所有注册的fragment
-    private static final Map<String, FragmentInfo> fragmentMap = new HashMap<>();
-    //所有注册的fragment
-    private static final Stack<ParasitismActivity> activityStack = new Stack<>();//所有打开的Activity
-    private static final Map<String, ParasitismActivity> activityMap = new HashMap<>();
+    private final Stack<FragmentInfo> fragmentStack = new Stack<>();//所有注册的fragment
+    private final Map<String, FragmentInfo> fragmentMap = new HashMap<>();//所有注册的fragment
 
-    public static Map<String, FragmentInfo> getFragmentMap() {
+    public Map<String, FragmentInfo> getFragmentMap() {
         return fragmentMap;
     }
 
-    public static Stack<ParasitismActivity> getActivityStack() {
-        return activityStack;
+    public Stack<FragmentInfo> getFragmentStack() {
+        return fragmentStack;
     }
 
-    public static Stack<FragmentInfo> getFragmentStack() {
-        return fragmentStack;
+    private FragmentManager() {
+    }
+
+    public static FragmentManager getInstance() {
+        if (fragmentManager == null) {
+            synchronized (FragmentManager.class) {
+                if (fragmentManager == null) {
+                    fragmentManager = new FragmentManager();
+                }
+            }
+        }
+        return fragmentManager;
     }
 
     public static void init(Application context) {
@@ -63,29 +72,6 @@ public class FragmentManager {
         }
     }
 
-    public synchronized static void addActivityStack(ParasitismActivity activity) {
-        String key = RandomStringTool.randomUpperCaseStr(10, true);
-        ParasitismActivity parasitismActivity = activityMap.get(key);
-        if (parasitismActivity == null) {
-            activityStack.add(activity);
-            activityMap.put(key, activity);
-        } else {
-            addActivityStack(activity);
-        }
-    }
-
-    public synchronized static void removeActivityStack(ParasitismActivity activity) {
-        activityStack.remove(activity);
-        activityMap.remove(activity.getActivityTag());
-    }
-
-    public synchronized static ParasitismActivity getCurrentActivity() {
-        if (activityStack.size() == 0) {
-            throw new RuntimeException("not have fragment is opening");
-        }
-        return activityStack.get(activityStack.size() - 1);
-    }
-
     /**
      * 通过注解处理器添加
      *
@@ -93,7 +79,7 @@ public class FragmentManager {
      * @param launchMode 启动模式
      * @param clazz      className
      */
-    public static void addFragment(String action, String launchMode, String clazz) {
+    public void addFragment(String action, String launchMode, String clazz) {
         Class<? super ActivityFragment> fragmentClass = null;
         Log.e("asdasdas", clazz);
         try {
@@ -115,15 +101,15 @@ public class FragmentManager {
      *
      * @param intent intent
      */
-    public static void startFragment(Intent intent) {
+    public void startFragment(Intent intent) {
         LaunchManager.getInstance(mContext).startFragment(intent);
     }
 
-    public static void startFragmentForResult(Intent intent, int requestCode) {
+    public void startFragmentForResult(Intent intent, int requestCode) {
         LaunchManager.getInstance(mContext).startFragment(intent, requestCode, null);
     }
 
-    public static void launcherFragment(Intent intent, int requestCode,
+    public void launcherFragment(Intent intent, int requestCode,
                                         ActivityResultCallback<? super FragmentResult> callback) {
         LaunchManager.getInstance(mContext).startFragment(intent, requestCode, callback);
     }
