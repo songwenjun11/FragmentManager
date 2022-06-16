@@ -85,14 +85,6 @@ public class ParasitismActivity extends AppCompatActivity {
 
     private void initIntent() {
         intent = getIntent();
-        ActivityResultLauncher<Intent> launcher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-
-                    }
-                });
     }
 
     /**
@@ -138,8 +130,14 @@ public class ParasitismActivity extends AppCompatActivity {
                 fragment.addKey(fragmentKey);
                 fragment.addIsResult(fragmentInfo.isResult());
                 fragment.addRequestCode(fragmentInfo.getRequestCode());
-                fragment.addCallBack(fragmentInfo.getCallback());
-                addStack(fragment);
+                ActivityFragment currentFragment = getCurrentFragment();
+                if (currentFragment != null) {
+                    currentFragment.addCallBack(fragmentInfo.getCallback());
+                    addStack(fragment);
+                } else {
+                    addStack(fragment);
+                    getCurrentFragment().addCallBack(fragmentInfo.getCallback());
+                }
             }
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
@@ -184,7 +182,11 @@ public class ParasitismActivity extends AppCompatActivity {
     }
 
     public ActivityFragment getCurrentFragment() {
-        return fragmentStack.get(fragmentStack.size() - 1);
+        if (fragmentStack.size() <= 0) {
+            return null;
+        }
+        int index = fragmentStack.size() - 1;
+        return fragmentStack.get(index);
     }
 
     /**
@@ -216,6 +218,7 @@ public class ParasitismActivity extends AppCompatActivity {
     public void finishFragment(ActivityFragment fragment, int requestCode, int resultCode, Intent data) {
         finishFragment(fragment);
         getCurrentFragment().onFragmentResult(requestCode, resultCode, data);
+        getCurrentFragment().clearCallBack();
     }
 
     public void finishFragment(ActivityFragment fragment) {

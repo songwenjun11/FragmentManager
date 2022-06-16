@@ -33,6 +33,10 @@ public class ActivityFragment extends Fragment {
     private Intent intent;
     private ActivityResultCallback<? super FragmentResult> callback;
 
+    public final void clearCallBack() {
+        callback = null;
+    }
+
     public final void addCallBack(ActivityResultCallback<? super FragmentResult> callback) {
         this.callback = callback;
     }

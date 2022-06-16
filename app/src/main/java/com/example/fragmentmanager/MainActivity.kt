@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import com.example.note.RegisterFragment
 import com.model.fragmentmanager.tools.FragmentManager
 
@@ -13,6 +14,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val name = OneFragment::class.java.name
         Log.e("asdasda", name)
-        FragmentManager.startFragment(Intent(this, TwoFragment::class.java))
+        findViewById<TextView>(R.id.tv).setOnClickListener {
+            FragmentManager.startFragment(Intent(this, TwoFragment::class.java))
+        }
     }
 }

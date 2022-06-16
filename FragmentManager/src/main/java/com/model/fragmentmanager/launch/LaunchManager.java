@@ -1,5 +1,7 @@
 package com.model.fragmentmanager.launch;
 
+import static com.model.fragmentmanager.config.KeyConfig.EVENT_ACTIVITY_CREATED;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +13,7 @@ import com.example.note.enums.LaunchMode;
 import com.model.fragmentmanager.activity.ParasitismActivity;
 import com.model.fragmentmanager.beans.FragmentInfo;
 import com.model.fragmentmanager.contracts.bean.FragmentResult;
+import com.model.fragmentmanager.event_bus.EventMessage;
 import com.model.fragmentmanager.launch.interfaces.ICustomLaunchModel;
 import com.model.fragmentmanager.launch.interfaces.ILunchModelStart;
 import com.model.fragmentmanager.launch.model.SingleInstanceModel;
@@ -18,10 +21,15 @@ import com.model.fragmentmanager.launch.model.SingleTaskModel;
 import com.model.fragmentmanager.launch.model.SingleTopModel;
 import com.model.fragmentmanager.launch.model.StandardModel;
 import com.model.fragmentmanager.tools.FragmentManager;
+import com.model.fragmentmanager.tools.Shake;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * 启动模式管理
@@ -35,6 +43,10 @@ public class LaunchManager {
     private volatile static LaunchManager launchManager;
 
     private ICustomLaunchModel iCustomLaunchModel;
+    private FragmentInfo fragmentInfo;
+    private Map<String, Object> params;
+    private Bundle bundle;
+    private String launchMode;
 
     public void setiCustomLaunchModel(ICustomLaunchModel iCustomLaunchModel) {
         this.iCustomLaunchModel = iCustomLaunchModel;
@@ -112,10 +124,33 @@ public class LaunchManager {
     }
 
     private void startActivityForClass(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle) {
-        String launchMode = fragmentInfo.getLaunchMode();
+        launchMode = fragmentInfo.getLaunchMode();
         if (FragmentManager.getActivityStack().size() == 0) {
+            this.fragmentInfo = fragmentInfo;
+            this.params = params;
+            this.bundle = bundle;
+            EventBus.getDefault().register(this);
             startParasitismActivity(bundle, fragmentInfo.getRequestCode());
+        } else {
+            startLauncher(fragmentInfo, params, bundle, launchMode);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void observer(EventMessage message) {
+        if (!Shake.isEventValid()) {
+            return;
+        }
+        if (message.getType() == EVENT_ACTIVITY_CREATED) {
+            if (fragmentInfo != null) {
+                startLauncher(fragmentInfo, params, bundle, launchMode);
+            }
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    private void startLauncher(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle,
+                               String launchMode) {
         if (!launchMode.equals(LaunchMode.STANDARD)) {
             switch (launchMode) {
                 case LaunchMode.SINGLE_INSTANCE:
