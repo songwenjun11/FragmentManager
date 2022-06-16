@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.model.fragmentmanager.activity.ParasitismActivity;
 import com.model.fragmentmanager.beans.FragmentInfo;
 import com.model.fragmentmanager.launch.interfaces.ILunchModelStart;
-import com.model.fragmentmanager.tools.FragmentManager;
+import com.model.fragmentmanager.tools.ActivityStackListManager;
 
 import java.util.Map;
 
@@ -18,7 +18,7 @@ import java.util.Map;
 public class StandardModel implements ILunchModelStart {
     @Override
     public void startActivity(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle) {
-        ParasitismActivity currentActivity = FragmentManager.getCurrentActivity();
+        ParasitismActivity currentActivity = ActivityStackListManager.getInstance().getCurrentActivity();
         currentActivity.addFragment(fragmentInfo, params);
     }
 }

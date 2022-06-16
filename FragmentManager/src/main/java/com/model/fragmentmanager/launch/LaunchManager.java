@@ -20,6 +20,7 @@ import com.model.fragmentmanager.launch.model.SingleInstanceModel;
 import com.model.fragmentmanager.launch.model.SingleTaskModel;
 import com.model.fragmentmanager.launch.model.SingleTopModel;
 import com.model.fragmentmanager.launch.model.StandardModel;
+import com.model.fragmentmanager.tools.ActivityStackListManager;
 import com.model.fragmentmanager.tools.FragmentManager;
 import com.model.fragmentmanager.tools.Shake;
 
@@ -74,7 +75,7 @@ public class LaunchManager {
         if (action == null || action.equals("")) {
             //class对象的启动方式
             String packageName = intent.getComponent().getClassName();
-            FragmentInfo fragmentInfo = FragmentManager.getFragmentMap().get(packageName);
+            FragmentInfo fragmentInfo = FragmentManager.getInstance().getFragmentMap().get(packageName);
             if (fragmentInfo == null) {
                 throw new NullPointerException("Fragment is not fount");
             }
@@ -93,7 +94,7 @@ public class LaunchManager {
         if (action == null || action.equals("")) {
             //class对象的启动方式
             String packageName = intent.getComponent().getClassName();
-            FragmentInfo fragmentInfo = FragmentManager.getFragmentMap().get(packageName);
+            FragmentInfo fragmentInfo = FragmentManager.getInstance().getFragmentMap().get(packageName);
             if (fragmentInfo == null) {
                 throw new NullPointerException("Fragment is not fount");
             }
@@ -110,7 +111,7 @@ public class LaunchManager {
 
     private void startActivityForAction(String action, Map<String, Object> params, Bundle bundle) {
         boolean containAction = false;
-        for (FragmentInfo fragmentInfo : FragmentManager.getFragmentStack()) {
+        for (FragmentInfo fragmentInfo : FragmentManager.getInstance().getFragmentStack()) {
             containAction = fragmentInfo.isContainAction(action);
             if (containAction) {
                 startActivityForClass(fragmentInfo, params, bundle);
@@ -125,7 +126,7 @@ public class LaunchManager {
 
     private void startActivityForClass(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle) {
         launchMode = fragmentInfo.getLaunchMode();
-        if (FragmentManager.getActivityStack().size() == 0) {
+        if (ActivityStackListManager.getInstance().getActivityStack().size() == 0) {
             this.fragmentInfo = fragmentInfo;
             this.params = params;
             this.bundle = bundle;

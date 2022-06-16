@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.model.fragmentmanager.activity.ParasitismActivity;
 import com.model.fragmentmanager.beans.FragmentInfo;
 import com.model.fragmentmanager.launch.interfaces.ILunchModelStart;
+import com.model.fragmentmanager.tools.ActivityStackListManager;
 import com.model.fragmentmanager.tools.FragmentManager;
 
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.Stack;
 public class SingleTaskModel implements ILunchModelStart {
     @Override
     public void startActivity(FragmentInfo fragmentInfo, Map<String, Object> params, Bundle bundle) {
-        Stack<ParasitismActivity> activityStack = FragmentManager.getActivityStack();
+        Stack<ParasitismActivity> activityStack = ActivityStackListManager.getInstance().getActivityStack();
         int activityIndex = -1;
         for (int i = 0; i < activityStack.size(); i++) {
             ParasitismActivity parasitismActivity = activityStack.get(i);
@@ -34,6 +35,6 @@ public class SingleTaskModel implements ILunchModelStart {
                 }
             }
         }
-        FragmentManager.getCurrentActivity().reuseAdd(fragmentInfo, params);
+        ActivityStackListManager.getInstance().getCurrentActivity().reuseAdd(fragmentInfo, params);
     }
 }

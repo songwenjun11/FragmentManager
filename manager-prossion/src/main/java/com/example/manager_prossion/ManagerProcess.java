@@ -108,7 +108,7 @@ public class ManagerProcess extends AbstractProcessor {
                     .append("\tpublic void put() {\n");
             for (String key : map.keySet()) {
                 sb.append(
-                        "\t\tFragmentManager.addFragment(\"" + map.get(key).action()[0] + "\", " +
+                        "\t\tFragmentManager.getInstance().addFragment(\"" + map.get(key).action()[0] + "\", " +
                                 "\"" + map.get(key).launchMode() + "\"" +
                                 ", \"" + key + "\");\n");
             }
